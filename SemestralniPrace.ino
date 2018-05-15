@@ -9,8 +9,16 @@
 #include <TM1637.h>
 #include <TimerOne.h>
 
+///ROTATE ENCODER
 
+#define BUTTON  3; //button
+#define ROTATE1 = 6;
+#define ROTATE2 = 5;
 
+//rotation
+int counter = 0; 
+int aState;
+int aLastState;
 
 /* PINS DEFINITION*/
 /*--BUZZER*/
@@ -64,37 +72,33 @@ void setup() {
   InitDisplay();
 
  //DefaultAlarms();
-  clearEEPROM();
+
+ //ENCODER PINS
+  pinMode(BUTTON, INPUT_PULLUP);
+  pinMode(ROTATE1, INPUT_PULLUP);
+  pinMode(ROTATE2, INPUT_PULLUP);
+
+  attachInterrupt(digitalPinToInterrupt(BUTTON), menu, CHANGE);
  
 
 }
 
 void loop() {
 
-  //m_Time = GetTime();
- 
-
-  for (int i = 0 ; i < 20 ; i++) {
-    byte value = EEPROM.read(i);                //read EEPROM data at address i
-    if(value != 0)                              //skip "empty" addresses
-    {
-                   //take care of the offset
-      Serial.print(i);
-      Serial.print(" : ");
-      Serial.println(value);
-       delay(500);
-    }
-  }
-  delay(1000);
+  m_Time = GetTime();
+  PrintDisplay();
   
 
-  DefaultAlarms();
+  
+
  
   // put your main code here, to run repeatedly:
 }
 
+
+
 //Clears all data from EEPROM
-void clearEEPROM()
+void ClearEEPROM()
 {
   for (int i = 0 ; i < EEPROM.length() ; i++) {
     if(EEPROM.read(i) != 0)                     //skip already "empty" addresses
@@ -158,6 +162,7 @@ void CheckAlarms() {
   
 }
 
+
 /*DISPLAY----------------------------------------------*/
 
 void InitDisplay(){
@@ -210,4 +215,37 @@ void Beep() {
   noTone(BUZZER);
   delay(1000);
 }
+
+
+//ENCODER
+void menu() {
+ Serial.print("menu open");
+ //readEncoderRotate();
+  
+}
+
+void readEncoderRotate() {
+ // put your main code here, to run repeatedly:
+  aState = digitalRead(pin2);
+  if (aState != aLastState){
+    if (digitalRead(pin3) != aState) { 
+       counter ++;
+     } else {
+       counter --;
+     }
+     Serial.print("Position: ");
+     Serial.println(counter);
+   } 
+   aLastState = aState; /
+   //if(rotateEnable){
+  //   readEncoderRotate();
+  // }
+}
+
+void menu() {
+ Serial.print("menu open");
+ //readEncoderRotate();
+  
+}
+
 
